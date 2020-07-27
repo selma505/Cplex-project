@@ -1,0 +1,68 @@
+{string} N=...;
+ {string} A=...;
+ {string} F=...;
+ float FT[F]=...;
+ float FW[F]=...;
+ float FV[F]=...;
+ string FO[F]=...;
+ string FD[F]=...;
+ {string} P=...;
+ string PO[P]=...;
+ string PD[P]=...;
+ float PL[P]=...;
+ float PW[P]=...;
+ float PV[P]=...; 
+ float AW[A][P]=...;
+ float AV[A][P]=...;
+ float C[P][F]=...;
+ float b=...;
+ //Variable
+ dvar boolean x[P][F][N][N];
+ dexpr float w=sum(p in P)(sum(f in F,i in N,j in N)x[p][f][i][j]*C[p][f]+(1-sum(f in F, i in N,j in N)x[p][f][i][j])*b);
+ //objective Function
+ minimize w;
+ subject to {
+ contrainte_2:
+ forall(p in P,f in F,j in N )
+  x[p][f][PO[p]][j]<=1;
+ constarinte_3:
+ forall(p in P,f in F, i in N, j in N)
+  x[p][f][i][PD[p]] == x[p][f][PO[p]][j];
+ constrainte_4:
+  forall(p in P,f in F, i in N,j in N)
+    x[p][f][i][PD[p]]* PL[p] <= FT[f]; 
+ constraint_5:
+  forall(p in P,f in F,i in N,j in N)
+    x[p][f][i][j]*PW[p]+sum (i in A)AW[i][p]<= FW[f];    
+ constraint_6:
+    forall(p in P,f in F,i in N,j in N)
+   x[p][f][i][j]*PV[p]+sum (i in A)AV[i][p]<= FV[f];
+ constraint_7:
+     forall(p in P,f in F,i in N, j in N : i!="Paris")
+     x[p][f][i][j]==0;      
+     //Data
+      de N={"M1","M2","Paris"};
+ P={"P1","P2"};
+ F={"V1","V2","V3"};
+ A={"A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"};
+ 
+ FT=[420,420,420];                 // temps de depart
+ FW=[3000,3000,3000];
+ FV=[200,200,300];
+ FO=["M1","M2","M1"];
+ FD=["Paris","Paris","Paris"];
+ 
+ PO=["M1","M2"];
+ PD=["Paris","Paris"];
+ PL=[540,540];                     //temps d'arrivée'
+ PW=[2000,2000];
+ PV=[100,100];
+ 
+ AW=[[10],[15],[19],[10],[15],[20],[20],[25],[18],[19]];
+ AV=[[2],[3],[4],[2],[3],[4],[4],[5],[4],[4]];
+  
+ C=[[2500,3000,2800], [2000,2500,3000]];
+ 
+ b=10000;
+ 
+ 
